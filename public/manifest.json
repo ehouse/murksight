@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Murksight",
+  "name": "Murksight Password Generator",
   "icons": [
     {
       "src": "favicon.ico",

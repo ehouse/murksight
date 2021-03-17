@@ -1,6 +1,12 @@
 import { arrayPick } from './library';
 import wordlist from './wordlist.json'
 
+enum LengthEnum {
+    short = 12,
+    medium = 16,
+    long = 22
+}
+
 /** Generate random number
  * 
  * @param max max range for random number 
@@ -15,43 +21,45 @@ function getRandomInt(max: number) {
  * @param length Either short, medium or long
  * @returns Returns random word from wordlist
  */
-function randomWord(length?: PWLength){
+function randomWord(length?: PWLength) {
     const lengthOptions: PWLength[] = ['short', 'medium', 'long']
     const selectLength = length ?? lengthOptions[getRandomInt(3)]
-    
+
     return arrayPick(wordlist[selectLength])
 }
 
-function randomNoise(){
+function randomNoise() {
     const noiseMethods = [
         () => [numberNoise(), symbolNoise()],
         () => [symbolNoise(), numberNoise()],
         () => [numberNoise(9), symbolNoise(), numberNoise(9)],
-        () => [numberNoise(9), symbolNoise({double: true})],
-        () => [symbolNoise({double: true}), numberNoise(9)],
+        () => [numberNoise(9), symbolNoise({ double: true })],
+        () => [symbolNoise({ double: true }), numberNoise(9)],
         () => [numberNoise(999)],
-        () => [symbolNoise({double: true})],
+        () => [symbolNoise({ double: true })],
         () => [symbolNoise()]
     ]
     return arrayPick(noiseMethods)().join('')
 }
 
 /* Return random character symbol in given symbol string */
-function symbolNoise({symbol = "!@#$%^&*()-_=+[{]}|<>/?,.:;", double = false} = {}){
+function symbolNoise({ symbol = "!@#$%^&*()-_=+[{]}|<>/?,.:;", double = false } = {}) {
     const returnSymbol = symbol.charAt(getRandomInt(symbol.length))
     return double ? returnSymbol + returnSymbol : returnSymbol
 }
 
 /* return random integer of given length */
-function numberNoise(length = 99){
+function numberNoise(length = 99) {
     return getRandomInt(length)
 }
 
 /* Return random line noise */
-function lineNoise(length = 18){
+function lineNoise(length: PWLength) {
     var returnString = ''
     const characterGroup = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-_=+[{]}|<>/?,.:;'
-    for(var x=0; x<=length; x++){
+
+
+    for (var x = 0; x <= LengthEnum[length]; x++) {
         returnString += characterGroup.charAt(getRandomInt(characterGroup.length))
     }
     return returnString

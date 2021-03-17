@@ -1,59 +1,106 @@
 import { arrayPick } from './library'
 import { numberNoise, randomNoise, randomWord, symbolNoise } from './mutator'
 
-function haddock(length: PWLength = 'medium'){
+function haddock(length: PWLength = 'medium') {
     var retryAttempts = 0
     const mutateMethod = {
-        'short': [],
+        'short': [
+            () => [randomWord('short'), randomNoise(), randomWord('medium')],
+            () => [randomWord('medium'), randomNoise(), randomWord('short')],
+        ],
         'medium': [
-            () => [ randomWord('short'), randomNoise(), randomWord('long') ],
-            () => [ randomWord('long'), randomNoise(), randomWord('short') ],
-            () => [ randomWord('medium'), randomNoise(), randomWord('medium') ],
-            () => [ randomWord('short'), randomNoise(), randomWord('medium'), numberNoise() ],
-            () => [ randomWord('medium'), randomNoise(), randomWord('short'), numberNoise() ],
-            () => [ randomWord('short'), randomNoise(), randomWord('medium'), symbolNoise() ],
-            () => [ randomWord('medium'), randomNoise(), randomWord('short'), symbolNoise() ]
+            () => [randomWord('short'), randomNoise(), randomWord('long')],
+            () => [randomWord('long'), randomNoise(), randomWord('short')],
+            () => [randomWord('medium'), randomNoise(), randomWord('medium')],
+            () => [randomWord('short'), randomNoise(), randomWord('medium'), numberNoise()],
+            () => [randomWord('medium'), randomNoise(), randomWord('short'), numberNoise()],
+            () => [randomWord('short'), randomNoise(), randomWord('medium'), symbolNoise()],
+            () => [randomWord('medium'), randomNoise(), randomWord('short'), symbolNoise()]
         ],
         'long': [
-            () => [ randomWord('medium'), randomNoise(), randomWord('long') ],
-            () => [ randomWord('long'), randomNoise(), randomWord('medium') ],
-            () => [ randomWord('short'), randomNoise(), randomWord('medium'), randomNoise(), randomWord('medium') ],
-            () => [ randomWord('short'), randomNoise(), randomWord('medium'), randomWord('medium'), randomNoise() ],
-
-
-        ] 
+            () => [randomWord('medium'), randomNoise(), randomWord('long')],
+            () => [randomWord('long'), randomNoise(), randomWord('medium')],
+            () => [randomWord('short'), randomNoise(), randomWord('medium'), randomNoise(), randomWord('medium')],
+            () => [randomWord('medium'), randomNoise(), randomWord('short'), randomNoise(), randomWord('medium')],
+            () => [randomWord('short'), randomNoise(), randomWord('medium'), randomWord('medium'), randomNoise()],
+            () => [randomWord('medium'), randomNoise(), randomWord('short'), randomWord('medium'), randomNoise()],
+        ]
     }
     const genPass = () => (arrayPick(mutateMethod[length])().join(''))
-    
+
     var password: string = ''
     var satisfied = false
-    if(length === 'medium'){
-        do{
+    if (length === 'short') {
+        do {
             retryAttempts++
             password = genPass()
-            if(password.length <= 13){
+            if (password.length <= 10) {
                 password += randomWord('short')
             }
-            if(password.length >= 14 && password.length <= 20){
+            if (password.length >= 12 && password.length <= 16) {
                 satisfied = true
             }
-        } while(satisfied === false)
-    } else if (length === 'long'){
-        do{
-            retryAttempts++
-            password = genPass()
-            if(password.length <= 14){
-                password += randomWord('short')
-            }
-            if(password.length >= 16){
-                satisfied = true
-            }
-        } while(satisfied === false)
+        } while (satisfied === false)
     }
-    if(retryAttempts >= 3){
+    else if (length === 'medium') {
+        do {
+            retryAttempts++
+            password = genPass()
+            if (password.length <= 12) {
+                password += randomWord('short')
+            }
+            if (password.length <= 15) {
+                password += randomNoise()
+            }
+            if (password.length >= 16 && password.length <= 20) {
+                satisfied = true
+            }
+        } while (satisfied === false)
+    } else if (length === 'long') {
+        do {
+            password = genPass()
+            if (password.length <= 14) {
+                password += randomWord('medium')
+            }
+            if (password.length <= 18) {
+                password += randomWord('medium')
+            }
+            if (password.length <= 21) {
+                password += randomNoise()
+            }
+            if (password.length >= 22) {
+                satisfied = true
+            }
+        } while (satisfied === false)
+    }
+    if (retryAttempts >= 3) {
         console.warn(`Too many retries on ${password}: ${retryAttempts}`)
     }
     return password
 }
 
-export { haddock }
+function passPhrase(length: PWLength): string {
+    let password: string[] = []
+
+    if (length === 'long') {
+        for (let index = 0; index < 5; index++) {
+            password.push(randomWord())
+        }
+    }
+    else if (length === 'medium') {
+        for (let index = 0; index < 4; index++) {
+            password.push(randomWord())
+        }
+    }
+    else {
+        throw Error('Invalid Method Given')
+    }
+
+    // Recurse if password is too short
+    if (password.join('').length <= 14) {
+        return passPhrase(length)
+    }
+    return password.join(' ')
+}
+
+export { haddock, passPhrase }
