@@ -1,17 +1,25 @@
+import { arrayPick } from './library';
 import wordlist from './wordlist.json'
 
-/* Random integer */
+/** Generate random number
+ * 
+ * @param max max range for random number 
+ * @returns Random number between 0 and max
+ */
 function getRandomInt(max: number) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-/* Return random word from imported wordlist.json */
+/** Return random word from imported wordlist.json
+ * 
+ * @param length Either short, medium or long
+ * @returns Returns random word from wordlist
+ */
 function randomWord(length?: PWLength){
     const lengthOptions: PWLength[] = ['short', 'medium', 'long']
     const selectLength = length ?? lengthOptions[getRandomInt(3)]
     
-    const wordlistLength = wordlist[selectLength].length
-    return wordlist[selectLength][getRandomInt(wordlistLength)]
+    return arrayPick(wordlist[selectLength])
 }
 
 function randomNoise(){
@@ -25,7 +33,7 @@ function randomNoise(){
         () => [symbolNoise({double: true})],
         () => [symbolNoise()]
     ]
-    return noiseMethods[getRandomInt(noiseMethods.length)]().join('')
+    return arrayPick(noiseMethods)().join('')
 }
 
 /* Return random character symbol in given symbol string */
@@ -39,4 +47,14 @@ function numberNoise(length = 99){
     return getRandomInt(length)
 }
 
-export { getRandomInt, numberNoise, symbolNoise, randomNoise, randomWord }
+/* Return random line noise */
+function lineNoise(length = 18){
+    var returnString = ''
+    const characterGroup = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-_=+[{]}|<>/?,.:;'
+    for(var x=0; x<=length; x++){
+        returnString += characterGroup.charAt(getRandomInt(characterGroup.length))
+    }
+    return returnString
+}
+
+export { getRandomInt, lineNoise, numberNoise, symbolNoise, randomNoise, randomWord }

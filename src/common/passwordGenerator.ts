@@ -1,10 +1,10 @@
-import { getRandomInt, numberNoise, randomNoise, randomWord, symbolNoise } from './mutator'
+import { arrayPick } from './library'
+import { numberNoise, randomNoise, randomWord, symbolNoise } from './mutator'
 
-type haddockF = (length?: 'medium' | 'long', complexity?: number) => string
-
-let haddock: haddockF = function(length='medium', complexity=3){
+function haddock(length: PWLength = 'medium'){
     var retryAttempts = 0
     const mutateMethod = {
+        'short': [],
         'medium': [
             () => [ randomWord('short'), randomNoise(), randomWord('long') ],
             () => [ randomWord('long'), randomNoise(), randomWord('short') ],
@@ -15,10 +15,15 @@ let haddock: haddockF = function(length='medium', complexity=3){
             () => [ randomWord('medium'), randomNoise(), randomWord('short'), symbolNoise() ]
         ],
         'long': [
+            () => [ randomWord('medium'), randomNoise(), randomWord('long') ],
+            () => [ randomWord('long'), randomNoise(), randomWord('medium') ],
+            () => [ randomWord('short'), randomNoise(), randomWord('medium'), randomNoise(), randomWord('medium') ],
+            () => [ randomWord('short'), randomNoise(), randomWord('medium'), randomWord('medium'), randomNoise() ],
+
 
         ] 
     }
-    const genPass = () => (mutateMethod[length][getRandomInt(mutateMethod[length].length)]().join(''))
+    const genPass = () => (arrayPick(mutateMethod[length])().join(''))
     
     var password: string = ''
     var satisfied = false
@@ -26,21 +31,21 @@ let haddock: haddockF = function(length='medium', complexity=3){
         do{
             retryAttempts++
             password = genPass()
-            if(password.length <= 11){
+            if(password.length <= 13){
                 password += randomWord('short')
             }
-            if(password.length >= 12 && password.length <= 20){
+            if(password.length >= 14 && password.length <= 20){
                 satisfied = true
             }
         } while(satisfied === false)
-    }else if (length === 'long'){
+    } else if (length === 'long'){
         do{
             retryAttempts++
             password = genPass()
             if(password.length <= 14){
                 password += randomWord('short')
             }
-            if(password.length >= 16 && password.length <= 28){
+            if(password.length >= 16){
                 satisfied = true
             }
         } while(satisfied === false)

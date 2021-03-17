@@ -3,24 +3,20 @@ import { haddock } from '../common/passwordGenerator';
 
 interface PasswordGenProps {
     pwGenMethod: pwGenMethod;
-    pwLength: number;
+    pwLength: PWLength;
+    refreshTrigger: boolean;
 }
 
 export class PasswordGen extends PureComponent<PasswordGenProps>{
-    static defaultProps = {
-        pwLength: 16,
-        pwGenMethod: "haddock"
-    }
-    
     render(){
         var pwList = []
         
         for (var x = 0; x <= 10; x++) {
-            pwList.push(<li key={x}>{haddock()}</li>)
+            pwList.push(<li key={x}><samp>{haddock(this.props.pwLength)}</samp></li>)
         }
 
-        return <ul>
-            {pwList}
-        </ul>
+        return <ul className='password-list is-family-monospace'>
+                {pwList}
+            </ul>
     }
 }
