@@ -7,6 +7,14 @@
     color: #5755d9;
 }
 
+.sidebar-button-list {
+    padding: .4rem;
+}
+
+.off-canvas .off-canvas-toggle {
+    top: -.65rem;
+}
+
 .method-picker button{
     display: block;
     width: 100%;
@@ -22,6 +30,17 @@
 
 .password-list li{
     padding-bottom: .15rem;
+}
+
+.clipboard-alert {
+    position: sticky;
+    margin-top: 1rem;
+    bottom: 30px;
+    width: 100%;
+}
+
+.clipboard-alert span{
+    padding-left: 1rem;
 }
 
 .verticle-btn-grp .btn:not(:first-child):not(:last-child){

@@ -4,7 +4,7 @@ Simple memorable password generator written in Typescript on top of React.
 https://pass.ehouse.io
 
 ## Security
-All password generation happens client side so it's as secure as can possible be. Absolutely nothing can be logged or written to disk. The passwords are generated from a dictionary of over 400,000 entries.
+All password generation happens client side so it's as secure as can possible be. Absolutely nothing can be logged or written to disk. The passwords are generated from a dictionary of over 40,000 entries.
 
 ### License 
 GPLv2 Copyright 2021, Evelyn House

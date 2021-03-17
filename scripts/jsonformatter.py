@@ -36,10 +36,10 @@ def format_json(jsonData):
     formatingData = {'short':0, 'medium': 0, 'long': 0}
 
     for x in jsonData:
-        if 3 <= len(x) <= 4:
+        if 3 <= len(x) <= 5:
             formatedJson['short'].append(x)
             formatingData['short'] += 1
-        elif 5 <= len(x) <= 8:
+        elif 6 <= len(x) <= 9:
             formatingData['medium'] += 1
             formatedJson['medium'].append(x)
         else:
