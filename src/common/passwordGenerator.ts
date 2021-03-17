@@ -2,7 +2,6 @@ import { arrayPick } from './library'
 import { numberNoise, randomNoise, randomWord, symbolNoise } from './mutator'
 
 function haddock(length: PWLength = 'medium') {
-    var retryAttempts = 0
     const mutateMethod = {
         'short': [
             () => [randomWord('short'), randomNoise(), randomWord('medium')],
@@ -32,7 +31,6 @@ function haddock(length: PWLength = 'medium') {
     var satisfied = false
     if (length === 'short') {
         do {
-            retryAttempts++
             password = genPass()
             if (password.length <= 10) {
                 password += randomWord('short')
@@ -44,7 +42,6 @@ function haddock(length: PWLength = 'medium') {
     }
     else if (length === 'medium') {
         do {
-            retryAttempts++
             password = genPass()
             if (password.length <= 12) {
                 password += randomWord('short')
@@ -72,9 +69,6 @@ function haddock(length: PWLength = 'medium') {
                 satisfied = true
             }
         } while (satisfied === false)
-    }
-    if (retryAttempts >= 3) {
-        console.warn(`Too many retries on ${password}: ${retryAttempts}`)
     }
     return password
 }

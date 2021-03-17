@@ -1,10 +1,10 @@
 import { arrayPick } from './library';
 import wordlist from './wordlist.json'
 
-enum LengthEnum {
-    short = 12,
-    medium = 16,
-    long = 22
+enum LineNoiseLengthEnum {
+    short = 14,
+    medium = 18,
+    long = 24
 }
 
 /** Generate random number
@@ -59,7 +59,7 @@ function lineNoise(length: PWLength) {
     const characterGroup = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-_=+[{]}|<>/?,.:;'
 
 
-    for (var x = 0; x <= LengthEnum[length]; x++) {
+    for (var x = 0; x <= LineNoiseLengthEnum[length]; x++) {
         returnString += characterGroup.charAt(getRandomInt(characterGroup.length))
     }
     return returnString
