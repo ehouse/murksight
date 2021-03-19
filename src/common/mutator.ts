@@ -65,4 +65,8 @@ function lineNoise(length: PWLength) {
     return returnString
 }
 
+function nist800(password: string){
+    
+}
+
 export { getRandomInt, lineNoise, numberNoise, symbolNoise, randomNoise, randomWord }

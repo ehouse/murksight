@@ -8,65 +8,87 @@ interface AppStateType {
   refreshTrigger: boolean;
 }
 
-interface ActionType {
-  type: 'length' | 'method' | 'refresh';
-  payload?: PWLength | pwGenMethod;
-}
-
 type buttonState = 'active' | 'disabled' | ''
 
-function AppReducer(state: AppStateType, action: ActionType) {
-  if (action.type === 'length') {
-    return { ...state, length: action.payload } as AppStateType
-  }
-  else if (action.type === 'method') {
-    return { ...state, method: action.payload } as AppStateType
-  }
-  else if (action.type === 'refresh') {
-    return { ...state, refreshTrigger: !state.refreshTrigger }
-  }
-  else {
-    return state
+interface lengthAction { type: 'length', payload: PWLength }
+interface methodAction { type: 'method', payload: pwGenMethod }
+
+type validAction =
+ | lengthAction
+ | methodAction
+
+type appReducerAction =
+ | validAction
+ | { type: 'refresh' }
+
+
+function appReducer(state: AppStateType, action: appReducerAction) {
+  switch (action.type) {
+    case 'length':
+      return { ...state, length: action.payload }
+    case 'method':
+      // Safely set state if invalid inputs are provided
+      if (state.length === 'short' && action.payload === 'Passphrase') {
+        return { ...state, method: action.payload, length: 'medium' } as AppStateType
+      }
+      return { ...state, method: action.payload } as AppStateType
+    case 'refresh':
+      return { ...state, refreshTrigger: !state.refreshTrigger }
+    default:
+      return state
   }
 }
 
 function App() {
-  const initialState: AppStateType = { length: 'long', method: 'haddock', refreshTrigger: false }
+  const initialState: AppStateType = { length: 'long', method: 'Haddock', refreshTrigger: false }
   const [stateCopy, setStateCopy] = useState(false)
-  const [state, dispatch] = useReducer(AppReducer, initialState)
+  const [state, dispatch] = useReducer(appReducer, initialState)
+
+  const pwGenMethodList: pwGenMethod[] = ['Haddock', 'NIST.SP.800-53', 'Passphrase', 'Linenoise']
+  const pwGenLengthList: PWLength[] = ['short', 'medium', 'long']
 
   useEffect(() => {
-    if(stateCopy === true){
-      setTimeout(()=>setStateCopy(false), 1000)
+    if (stateCopy === true) {
+      setTimeout(() => setStateCopy(false), 1400)
     }
-  })
+  }, [stateCopy])
 
   /* Determine if button is active or disabled */
-  const getButtonState = (action: 'length' | 'method', payload: PWLength | pwGenMethod): buttonState => {
-    if (action === 'length' && payload === 'short' && state.method === 'passphrase') return 'disabled' // Disabled short passphrase
-    return (state[action] === payload ? 'active' : '')
+  const getButtonState = ({type, payload}: validAction): buttonState => {
+    if (type === 'length' && payload === 'short' && state.method === 'Passphrase') return 'disabled' // Disabled short passphrase
+    if (type === 'length' && state.method === 'NIST.SP.800-53') return 'disabled' // Disable length selection for Nist800
+    return (state[type] === payload ? 'active' : '')
   }
 
   /* Create specific button with stateful actions */
-  const createButton = (action: 'length' | 'method', payload: [PWLength | pwGenMethod, string][]) => {
+  const createButton = (buttons:  validAction[]) => {
     const returnArray: JSX.Element[] = []
-    payload.forEach((item) => {
-      returnArray.push(<button className={`btn ${getButtonState(action, item[0])}`} onClick={() => dispatch({ type: action, payload: item[0] })}>{item[1]}</button>
+    buttons.forEach((item) => {
+      returnArray.push(<button className={`btn ${getButtonState(item)}`} onClick={() => dispatch(item)}>{item.payload}</button>
       )
     })
     return <>{returnArray}</>
+  }
+
+  const getSubHeader = (method: pwGenMethod) => {
+    switch(method){
+      case 'Haddock': return 'Memorable secure passwords constructed from words and symbols.'
+      case 'Linenoise': return 'Random characters and symbols for strong passwords.'
+      case 'NIST.SP.800-53': return 'Goverment password requirment.'
+      case 'Passphrase': return 'Easy to remember and incredibly strong.'
+    }
   }
 
   /* Gemeric JSX logic for selection sidebar */
   const createButtonCode = () => (<>
     <h5>Password Method</h5>
     <div className='verticle-btn-grp method-picker'>
-      {createButton('method', [['haddock', 'Haddock'], ['NIST.SP.800-53', 'NIST.SP.800-53'], ['passphrase', 'Passphrase'], ['linenoise', 'Linenoise']])}
+      {createButton(pwGenMethodList.map((gen_method) => ({ type: 'method', payload: gen_method })))}
     </div>
     <div className='length-picker'>
       <h5>Length</h5>
       <div className="btn-group btn-group-block">
-        {createButton('length', [['short', 'short'], ['medium', 'medium'], ['long', 'long']])}
+      {createButton(pwGenLengthList.map((gen_method) => ({ type: 'length', payload: gen_method })))}
       </div>
     </div>
     <button className='btn password-refresh' onClick={() => dispatch({ type: 'refresh' })}><i className='icon icon-refresh mr-1'></i>Refresh</button>
@@ -103,13 +125,17 @@ function App() {
         </div>
         <div className='column'>
           <div className='card'>
+            <div className="card-header">
+              <div className="card-title h5">{state.method}</div>
+              <div className="card-subtitle text-gray">{getSubHeader(state.method)}</div>
+            </div>
             <PasswordGen pwLength={state.length} pwGenMethod={state.method} refreshTrigger={state.refreshTrigger} copyCallBack={setStateCopy} />
           </div>
         </div>
       </div>
-        <div className={`toast toast-success clipboard-alert ${stateCopy ? '' : 'd-hide'}`}>
-          <span className='h6'>Copied to Clipboard!</span>
-        </div>
+      <div className={`toast toast-success clipboard-alert ${stateCopy ? '' : 'd-hide'}`}>
+        <span className='h6'>Copied to Clipboard!</span>
+      </div>
     </div>
   </div>
   )
