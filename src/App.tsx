@@ -22,16 +22,18 @@ type appReducerAction =
  | { type: 'refresh' }
 
 
-function appReducer(state: AppStateType, action: appReducerAction) {
+function appReducer(state: AppStateType, action: appReducerAction): AppStateType {
   switch (action.type) {
     case 'length':
       return { ...state, length: action.payload }
     case 'method':
       // Safely set state if invalid inputs are provided
       if (state.length === 'short' && action.payload === 'Passphrase') {
-        return { ...state, method: action.payload, length: 'medium' } as AppStateType
+        const obj: AppStateType = { ...state, method: action.payload, length: 'medium' }
+        return obj
+        //return { method: action.payload, length: 'medium' } as AppStateType
       }
-      return { ...state, method: action.payload } as AppStateType
+      return { ...state, method: action.payload }
     case 'refresh':
       return { ...state, refreshTrigger: !state.refreshTrigger }
     default:
