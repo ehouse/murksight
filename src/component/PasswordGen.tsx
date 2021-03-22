@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
-import { lineNoise } from '../common/mutator';
-import { haddock, passPhrase } from '../common/passwordGenerator';
+import { haddock, lineNoise, passPhrase } from '../common/passwordGenerator';
 
 interface PasswordGenProps {
     pwGenMethod: pwGenMethod;
@@ -17,6 +16,7 @@ export class PasswordGen extends PureComponent<PasswordGenProps>{
             for (let x = 0; x <= 8; x++) {
                 let password = haddock(this.props.pwLength)
                 pwList.push(<li key={x}><samp className='c-hand' onClick={() => {navigator.clipboard.writeText(password); this.props.copyCallBack(true)}}>{password}</samp></li>)
+                pwList.push(<div className="divider"></div>)
             }
         }
         else if (this.props.pwGenMethod === 'Linenoise') {

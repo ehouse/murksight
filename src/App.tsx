@@ -8,30 +8,28 @@ interface AppStateType {
   refreshTrigger: boolean;
 }
 
-type buttonState = 'active' | 'disabled' | ''
+type ButtonState = 'active' | 'disabled' | ''
 
-interface lengthAction { type: 'length', payload: PWLength }
-interface methodAction { type: 'method', payload: pwGenMethod }
+interface LengthAction { type: 'length', payload: PWLength }
+interface MethodAction { type: 'method', payload: pwGenMethod }
 
-type validAction =
- | lengthAction
- | methodAction
+type ValidAction =
+ | LengthAction
+ | MethodAction
 
-type appReducerAction =
- | validAction
+type AppReducerAction =
+ | ValidAction
  | { type: 'refresh' }
 
 
-function appReducer(state: AppStateType, action: appReducerAction): AppStateType {
+function appReducer(state: AppStateType, action: AppReducerAction): AppStateType {
   switch (action.type) {
     case 'length':
       return { ...state, length: action.payload }
     case 'method':
       // Safely set state if invalid inputs are provided
       if (state.length === 'short' && action.payload === 'Passphrase') {
-        const obj: AppStateType = { ...state, method: action.payload, length: 'medium' }
-        return obj
-        //return { method: action.payload, length: 'medium' } as AppStateType
+        return { ...state, method: action.payload, length: 'medium' }
       }
       return { ...state, method: action.payload }
     case 'refresh':
@@ -42,7 +40,7 @@ function appReducer(state: AppStateType, action: appReducerAction): AppStateType
 }
 
 function App() {
-  const initialState: AppStateType = { length: 'long', method: 'Haddock', refreshTrigger: false }
+  const initialState: AppStateType = { length: 'medium', method: 'Haddock', refreshTrigger: false }
   const [stateCopy, setStateCopy] = useState(false)
   const [state, dispatch] = useReducer(appReducer, initialState)
 
@@ -56,14 +54,14 @@ function App() {
   }, [stateCopy])
 
   /* Determine if button is active or disabled */
-  const getButtonState = ({type, payload}: validAction): buttonState => {
+  const getButtonState = ({type, payload}: ValidAction): ButtonState => {
     if (type === 'length' && payload === 'short' && state.method === 'Passphrase') return 'disabled' // Disabled short passphrase
     if (type === 'length' && state.method === 'NIST.SP.800-53') return 'disabled' // Disable length selection for Nist800
     return (state[type] === payload ? 'active' : '')
   }
 
   /* Create specific button with stateful actions */
-  const createButton = (buttons:  validAction[]) => {
+  const createButton = (buttons:  ValidAction[]) => {
     const returnArray: JSX.Element[] = []
     buttons.forEach((item) => {
       returnArray.push(<button className={`btn ${getButtonState(item)}`} onClick={() => dispatch(item)}>{item.payload}</button>

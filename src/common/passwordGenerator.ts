@@ -1,5 +1,11 @@
 import { arrayPick } from './library'
-import { numberNoise, randomNoise, randomWord, symbolNoise } from './mutator'
+import { randomNumber, randomNoise, randomWord } from './mutator'
+
+enum LengthReqEnum {
+    short = 14,
+    medium = 18,
+    long = 24
+}
 
 function haddock(length: PWLength = 'medium') {
     const mutateMethod = {
@@ -11,10 +17,8 @@ function haddock(length: PWLength = 'medium') {
             () => [randomWord('short'), randomNoise(), randomWord('long')],
             () => [randomWord('long'), randomNoise(), randomWord('short')],
             () => [randomWord('medium'), randomNoise(), randomWord('medium')],
-            () => [randomWord('short'), randomNoise(), randomWord('medium'), numberNoise()],
-            () => [randomWord('medium'), randomNoise(), randomWord('short'), numberNoise()],
-            () => [randomWord('short'), randomNoise(), randomWord('medium'), symbolNoise()],
-            () => [randomWord('medium'), randomNoise(), randomWord('short'), symbolNoise()]
+            () => [randomWord('short'), randomNoise(), randomWord('medium'), randomNoise()],
+            () => [randomWord('medium'), randomNoise(), randomWord('short'), randomNoise()]
         ],
         'long': [
             () => [randomWord('medium'), randomNoise(), randomWord('long')],
@@ -94,7 +98,22 @@ function passPhrase(length: PWLength): string {
     if (password.join('').length <= 14) {
         return passPhrase(length)
     }
-    return password.join(' ')
+    return password.join('-')
 }
 
-export { haddock, passPhrase }
+/* Return random line noise */
+function lineNoise(length: PWLength) {
+    var returnString = ''
+    const characterGroup = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()-_=+[{]}|<>/?,.:;'
+
+    for (var x = 0; x <= LengthReqEnum[length]; x++) {
+        returnString += characterGroup.charAt(randomNumber(characterGroup.length))
+    }
+    return returnString
+}
+
+function nist800(){
+
+}
+
+export { haddock, lineNoise, passPhrase }
