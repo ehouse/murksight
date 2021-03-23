@@ -1,4 +1,3 @@
-import { arrayPick } from './library'
 import { randomNumber, randomNoise, randomWord } from './mutator'
 
 enum LengthReqEnum {
@@ -7,74 +6,62 @@ enum LengthReqEnum {
     long = 24
 }
 
-function haddock(length: PWLength = 'medium') {
-    const mutateMethod = {
-        'short': [
-            () => [randomWord('short'), randomNoise(), randomWord('medium')],
-            () => [randomWord('medium'), randomNoise(), randomWord('short')],
-        ],
-        'medium': [
-            () => [randomWord('short'), randomNoise(), randomWord('long')],
-            () => [randomWord('long'), randomNoise(), randomWord('short')],
-            () => [randomWord('medium'), randomNoise(), randomWord('medium')],
-            () => [randomWord('short'), randomNoise(), randomWord('medium'), randomNoise()],
-            () => [randomWord('medium'), randomNoise(), randomWord('short'), randomNoise()]
-        ],
-        'long': [
-            () => [randomWord('medium'), randomNoise(), randomWord('long')],
-            () => [randomWord('long'), randomNoise(), randomWord('medium')],
-            () => [randomWord('short'), randomNoise(), randomWord('medium'), randomNoise(), randomWord('medium')],
-            () => [randomWord('medium'), randomNoise(), randomWord('short'), randomNoise(), randomWord('medium')],
-            () => [randomWord('short'), randomNoise(), randomWord('medium'), randomWord('medium'), randomNoise()],
-            () => [randomWord('medium'), randomNoise(), randomWord('short'), randomWord('medium'), randomNoise()],
-        ]
-    }
-    const genPass = () => (arrayPick(mutateMethod[length])().join(''))
+enum LengthJitter {
+    short = 3,
+    medium = 2,
+    long = 1
+}
 
-    var password: string = ''
-    var satisfied = false
-    if (length === 'short') {
+/**
+ * Returns true if die lands on max face value. A 4 sided die will return true 25 n% of the time.
+ * @param die faces on die
+ * @returns true if max face value was landed on
+ */
+function dieRoll(die: number): boolean {
+    return (randomNumber(die) === die-1)
+}
+
+// Types for haddock passwords
+type Segment = { type: 'noise' | 'word', data: string }
+type Password = Segment[]
+
+/**
+ * Loop over Password Object and reduce down to a single string 
+ * @param password array of password segments 
+ * @returns flattened password string
+ */
+ function mapSegments(password: Password): string{
+    return(password.map((i) => (i.data)).join(''))
+}
+
+/**
+ * Generate a password from a series of words and noisy symbols
+ * @param length password generation length
+ * @returns password string 
+ */
+function haddock(length: PWLength = 'medium'): string {
+    let store: Password
+    // Loop to keep password length reasonable
+    do {
+        store = []
+        // Loop and fill store with words
         do {
-            password = genPass()
-            if (password.length <= 10) {
-                password += randomWord('short')
+            store.push({ type: 'word', data: randomWord() })
+        } while (mapSegments(store).length <= LengthReqEnum[length] - 4)
+
+        let noiseOdds = 1
+        // Iterate over store and introduce noise at a decreasing rate flattening the nested array when done
+        store = store.map((val) => {
+            if(dieRoll(noiseOdds)){
+                noiseOdds += LengthJitter[length]
+                const noise: Segment = { type: 'noise', data: randomNoise() }
+                return [val, noise]
             }
-            if (password.length >= 12 && password.length <= 16) {
-                satisfied = true
-            }
-        } while (satisfied === false)
-    }
-    else if (length === 'medium') {
-        do {
-            password = genPass()
-            if (password.length <= 12) {
-                password += randomWord('short')
-            }
-            if (password.length <= 15) {
-                password += randomNoise()
-            }
-            if (password.length >= 16 && password.length <= 20) {
-                satisfied = true
-            }
-        } while (satisfied === false)
-    } else if (length === 'long') {
-        do {
-            password = genPass()
-            if (password.length <= 14) {
-                password += randomWord('medium')
-            }
-            if (password.length <= 18) {
-                password += randomWord('medium')
-            }
-            if (password.length <= 21) {
-                password += randomNoise()
-            }
-            if (password.length >= 22) {
-                satisfied = true
-            }
-        } while (satisfied === false)
-    }
-    return password
+            return [val]
+        }).flat()
+    } while(mapSegments(store).length < LengthReqEnum[length] + 4)
+
+    return mapSegments(store)
 }
 
 function passPhrase(length: PWLength): string {
@@ -91,7 +78,7 @@ function passPhrase(length: PWLength): string {
         }
     }
     else {
-        throw Error('Invalid Method Given')
+        throw Error('Invalid length given')
     }
 
     // Recurse if password is too short

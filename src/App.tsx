@@ -64,7 +64,7 @@ function App() {
   const createButton = (buttons:  ValidAction[]) => {
     const returnArray: JSX.Element[] = []
     buttons.forEach((item) => {
-      returnArray.push(<button className={`btn ${getButtonState(item)}`} onClick={() => dispatch(item)}>{item.payload}</button>
+      returnArray.push(<button key={item.payload} className={`btn ${getButtonState(item)}`} onClick={() => dispatch(item)}>{item.payload}</button>
       )
     })
     return <>{returnArray}</>
