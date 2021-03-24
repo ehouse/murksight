@@ -8,7 +8,7 @@
 }
 
 .sidebar-button-list {
-    padding: .4rem;
+    padding: 1rem .4rem;
 }
 
 .off-canvas .off-canvas-toggle {
@@ -28,8 +28,15 @@
     margin-top: 1.5rem;
 }
 
-.password-list li{
-    padding-bottom: .15rem;
+.password-list li {
+    padding-bottom: .5rem;
+    margin: .5rem 0;
+    border-bottom: .08rem solid #f1f3f5;
+}
+
+.password-list li:last-child{
+    padding-bottom: 0;
+    border-bottom: none;
 }
 
 .clipboard-alert {
@@ -42,6 +49,7 @@
 .clipboard-alert span{
     padding-left: 1rem;
 }
+
 
 .verticle-btn-grp .btn:not(:first-child):not(:last-child){
     border-radius: 0;
@@ -57,4 +65,19 @@
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
 
+}
+
+@media screen and (min-width: 960px){
+    .password-list {
+        list-style-type: none;
+    }
+
+    .card-custom {
+        border: initial;
+        border-left: .05rem solid #dadee4;
+    }
+
+    .password-list li {
+        margin: .5rem 5rem .5rem 0;
+    }    
 }

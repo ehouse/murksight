@@ -19,9 +19,10 @@
     "gzipper": "gzipper",
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "test": "react-scripts test",
     "compress": "npm run build && gzipper compress ./build ./dist",
-    "deploy": "npm run compress && rsync -avh --delete ./dist/* marisa.ehouse.io:/var/www/murksight",
-    "test": "react-scripts test"
+    "release": "npm run compress",
+    "deploy": "rsync -avh --delete ./dist/* marisa.ehouse.io:/var/www/murksight"
   },
   "eslintConfig": {
     "extends": "react-app"
