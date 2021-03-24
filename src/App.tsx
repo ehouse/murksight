@@ -73,8 +73,8 @@ function App() {
   const getSubHeader = (method: pwGenMethod) => {
     switch (method) {
       case 'Haddock': return 'Memorable secure passwords constructed from words and symbols.'
-      case 'Linenoise': return 'Random characters and symbols for strong passwords.'
-      case 'NIST.SP.800-53': return 'Goverment password requirment.'
+      case 'Linenoise': return 'Random characters passwords great for password managers.'
+      case 'NIST.SP.800-53': return 'Strong goverment password requirement.'
       case 'Passphrase': return 'Easy to remember and incredibly strong.'
     }
   }

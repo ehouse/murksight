@@ -3,9 +3,12 @@ import wordlist from './wordlist.json'
 
 const LOWERCASE = 'abcdefghijklmnopqrstuvwxyz'
 const UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-const SYMBOL = '!@#$%^&*()-_=+[{]}|<>/?,.:;'
 const NUMBER = '0123456789'
-const ALLVALIDCHAR = LOWERCASE + UPPERCASE + SYMBOL + NUMBER
+const EASYSYMBOL = '!@#$%^&*()-_=+[{]}|<>/?,.:;'
+const ALLSYMBOL = '!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
+
+// 89 Characters long in total 
+const ALLVALIDCHAR = LOWERCASE + UPPERCASE + ALLSYMBOL + NUMBER
 
 /** Generate random number
  * 
@@ -44,14 +47,13 @@ function randomNoise(): string {
         () => [numberNoise(9), symbolNoise({ double: true })],
         () => [symbolNoise({ double: true }), numberNoise(9)],
         () => [numberNoise(999)],
-        () => [symbolNoise({ double: true })],
-        () => [randomNoise()]
+        () => [symbolNoise({ double: true })]
     ]
     return arrayPick(noiseMethods)().join('')
 }
 
 /* Return random character symbol in given symbol string */
-function symbolNoise({ symbol = SYMBOL, double = false } = {}) {
+function symbolNoise({ symbol = EASYSYMBOL, double = false } = {}) {
     const returnSymbol = symbol.charAt(randomNumber(symbol.length))
     return double ? returnSymbol + returnSymbol : returnSymbol
 }
@@ -61,4 +63,4 @@ function numberNoise(length = 99) {
     return randomNumber(length)
 }
 
-export { randomNumber, numberNoise, symbolNoise, randomNoise, randomWord, ALLVALIDCHAR, LOWERCASE, UPPERCASE, SYMBOL, NUMBER }
+export { randomNumber, numberNoise, symbolNoise, randomNoise, randomWord, ALLVALIDCHAR, LOWERCASE, UPPERCASE, EASYSYMBOL, ALLSYMBOL, NUMBER }

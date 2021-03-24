@@ -41,7 +41,8 @@ function haddock(length: PWLength = 'medium'): string {
         let store: Password = []
         // Loop and fill store with words
         do {
-            store.push({ type: 'word', data: randomWord() })
+            // Exclude long words when generating short passwords
+            store.push({ type: 'word', data: length === 'short' ? randomWord({ exclude: 'long' }) : randomWord() })
         } while (mapSegments(store).length <= LengthReqEnum[length] - 4)
 
         let noiseOdds = 1
@@ -90,11 +91,11 @@ function passPhrase(length: PWLength): string {
 }
 
 /* Return random line noise */
-function lineNoise(length: PWLength) {
+function lineNoise(length: PWLength): string {
     let returnString = ''
     const characterGroup = ALLVALIDCHAR
 
-    for (let x = 0; x <= LengthReqEnum[length]; x++) {
+    for (let x = 0; x < LengthReqEnum[length] + 4; x++) {
         returnString += characterGroup.charAt(randomNumber(characterGroup.length))
     }
     return returnString
@@ -104,7 +105,7 @@ function lineNoise(length: PWLength) {
  * I hugely dislike this function AND this method... :(
  * @returns nist800 password string
  */
-function nist800() {
+function nist800(): string {
     let store: Password = []
     do {
         store.push({ type: 'word', data: randomWord({ exclude: 'long' }) })
@@ -112,9 +113,12 @@ function nist800() {
 
     let noiseCounter = store.length
     const wordLength = store.length
-    for (let x = 1; x < wordLength; x++) {
-        if (dieRoll(noiseCounter - 1)) {
+    for (let x = 1; x <= wordLength; x++) {
+        console.log(`x ${x}, noiseCounter ${noiseCounter}`)
+        if (dieRoll(noiseCounter)) {
+            console.log(`Adding Noise at ${x}`)
             store.splice(x, 0, { type: 'noise', data: randomNoise() })
+            x++
         } else {
             noiseCounter--
         }

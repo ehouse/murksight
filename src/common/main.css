@@ -3,7 +3,7 @@
     padding-bottom: 1.2rem;
 }
 
-.navbar a:visited{
+.navbar a:visited {
     color: #5755d9;
 }
 
@@ -15,12 +15,12 @@
     top: -.65rem;
 }
 
-.method-picker button{
+.method-picker button {
     display: block;
     width: 100%;
 }
 
-.length-picker{
+.length-picker {
     margin-top: 1rem;
 }
 
@@ -34,7 +34,7 @@
     border-bottom: .08rem solid #f1f3f5;
 }
 
-.password-list li:last-child{
+.password-list li:last-child {
     padding-bottom: 0;
     border-bottom: none;
 }
@@ -46,34 +46,34 @@
     width: 100%;
 }
 
-.clipboard-alert span{
+.clipboard-alert span {
     padding-left: 1rem;
 }
 
-
-.verticle-btn-grp .btn:not(:first-child):not(:last-child){
+.verticle-btn-grp .btn:not(:first-child):not(:last-child) {
     border-radius: 0;
     margin-top: -.05rem;
 }
-.verticle-btn-grp .btn:last-child:not(:first-child){
+.verticle-btn-grp .btn:last-child:not(:first-child) {
     border-top-right-radius: 0;
     border-top-left-radius: 0;
     margin-top: -.05rem;
 }
 
-.verticle-btn-grp .btn:first-child:not(:last-child){
+.verticle-btn-grp .btn:first-child:not(:last-child) {
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
 
 }
 
-@media screen and (min-width: 960px){
+@media screen and (min-width: 960px) {
     .password-list {
         list-style-type: none;
     }
 
     .card-custom {
         border: initial;
+        border-radius: initial;
         border-left: .05rem solid #dadee4;
     }
 
